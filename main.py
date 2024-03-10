@@ -1,10 +1,14 @@
 #main.py
-import tkinter as tk
-from main_screen import Magoa
+import modules.path_tree  # Precisa ser o primeiro módulo a ser importado, e precisa ser importado mesmo sem uso!
+print("Root Project: ",modules.path_tree.root_path)
+print("Database Project: ",modules.path_tree.database_path)
+print("Json Config Path Project: ",modules.path_tree.json_config_path)
 from modules.check_monitor import Check_Screen
-# Incia verificação de monitores disponíveis, e salva resoluções dos monitores e outros
 check_screen = Check_Screen()
 check_screen.update_monitor()
+from main_screen import Magoa
+
+
 
 if __name__ == "__main__":
     app = Magoa(check_screen)
