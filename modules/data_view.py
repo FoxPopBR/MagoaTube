@@ -22,10 +22,10 @@ class SeuApp(tk.Tk):
             'Titulo': {'width': 30, 'height': 1, 'row': 0, 'column': 2,'columnspan': 4},
             # Video progressive
             'Audio_e_Video': {'width': 15, 'height': 1, 'row': 0, 'column': 6},
-            'file_extension.': {'width': 5, 'height': 1, 'row': 0, 'column': 7},
-            'file_size.': {'width': 8, 'height': 1, 'row': 0, 'column': 8},
-            'download_url.': {'width': 10, 'height': 1, 'row': 0, 'column': 9, 'columnspan': 2},
-            'codec.': {'width': 10, 'height': 1, 'row': 0, 'column': 11},
+            'file_extension': {'width': 5, 'height': 1, 'row': 0, 'column': 7},
+            'file_size_pro': {'width': 8, 'height': 1, 'row': 0, 'column': 8},
+            'download_url': {'width': 10, 'height': 1, 'row': 0, 'column': 9, 'columnspan': 2},
+            'codec': {'width': 10, 'height': 1, 'row': 0, 'column': 11},
             #'resolution.': {'width': 10, 'height': 1, 'row': 4, 'column': 2, 'columnspan': 2},
             #'fps.': {'width': 5, 'height': 1, 'row': 4, 'column': 4},
 

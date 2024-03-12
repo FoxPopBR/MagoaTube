@@ -1,0 +1,8 @@
+ast==1.6.3
+youtube_transcript_api==0.6.2
+yt_dlp==2024.2.24.232815.dev0
+tkinter==0.3.0
+screeninfo==0.8.1
+pytube==15.0.0
+re==3.7.1
+os==1.2.0

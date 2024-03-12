@@ -29,7 +29,7 @@ prog_stream_resolution = None
 prog_stream_fps = None
 prog_stream_codec = None
 prog_stream_bitrate = None
-prog_stream_file_size = None
+prog_stream_file_size_pro = 0
 
 # Variáveis para a tabela 'adaptive_streams'
 adapt_stream_video_id = None
@@ -41,7 +41,7 @@ adapt_stream_resolution = None
 adapt_stream_fps = None
 adapt_stream_codec = None
 adapt_stream_bitrate = None
-adapt_stream_file_size = None
+adapt_stream_file_size_adp = None
 adapt_stream_audio_quality = None
 
 # Variáveis para a tabela 'thumbnails'
@@ -52,8 +52,8 @@ thumb_height = None
 
 def extract_video_info(url):
     global video_url, video_title, video_duration, video_description, video_views, video_likes, video_dislikes, video_upload_date, video_uploader
-    global prog_stream_format_id, prog_stream_download_url, prog_stream_type, prog_stream_file_extension, prog_stream_resolution, prog_stream_fps, prog_stream_codec, prog_stream_bitrate, prog_stream_file_size
-    global adapt_stream_format_id, adapt_stream_download_url, adapt_stream_type, adapt_stream_file_extension, adapt_stream_resolution, adapt_stream_fps, adapt_stream_codec, adapt_stream_bitrate, adapt_stream_file_size, adapt_stream_audio_quality
+    global prog_stream_format_id, prog_stream_download_url, prog_stream_type, prog_stream_file_extension, prog_stream_resolution, prog_stream_fps, prog_stream_codec, prog_stream_bitrate, prog_stream_file_size_pro
+    global adapt_stream_format_id, adapt_stream_download_url, adapt_stream_type, adapt_stream_file_extension, adapt_stream_resolution, adapt_stream_fps, adapt_stream_codec, adapt_stream_bitrate, adapt_stream_file_size_adp, adapt_stream_audio_quality
     global thumb_url, thumb_width, thumb_height
     video_url = url
     ydl_opts = {
@@ -85,7 +85,7 @@ def extract_video_info(url):
                 'fps': stream.get('fps', 0),
                 'codec': stream.get('vcodec', ''),
                 'bitrate': stream.get('tbr', 0),
-                'file_size': stream.get('filesize', 0),
+                'file_size_pro': stream.get('file_size_pro', 0),
             } for stream in info_dict.get('formats', []) if stream.get('acodec') != 'none']
 
             streams_adaptativos = [{
@@ -96,7 +96,7 @@ def extract_video_info(url):
                 'fps': stream.get('fps', 0),
                 'codec': stream.get('vcodec', ''),
                 'bitrate': stream.get('tbr', 0),
-                'file_size': stream.get('filesize', 0),
+                'file_size_adp': stream.get('file_size_adp', 0),
                 'audio_quality': stream.get('asr', 0),
             } for stream in info_dict.get('formats', []) if stream.get('acodec') == 'none']
 

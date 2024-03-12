@@ -34,23 +34,24 @@ class DatabaseManager:
             conn.close()
         return video_info
 
-    def buscar_info_completa_por_titulo(self, titulo):
+    def buscar_info_completa_por_id_video(self, selected_video_id):
         conn = self.conectar_db()
         if conn is None:
             return {}
 
         try:
-            video_info = {}
+            video_info_table = {}
+            id_video = 0
             streams_progressivos = []
             streams_adaptativos = []
             miniaturas = []
 
             # Buscar informações do vídeo na tabela videos
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM videos WHERE title = ?", (titulo,))
+            cursor.execute("SELECT * FROM videos WHERE id = ?", (selected_video_id,))
             row = cursor.fetchone()
             if row:
-                video_info = {
+                video_info_table = {
                     'id': row[0], 'url': row[1], 'title': row[2], 'description': row[3],
                     'views': row[4], 'likes': row[5], 'dislikes': row[6], 'upload_date': row[7], 'uploader': row[8]
                 }
@@ -61,7 +62,7 @@ class DatabaseManager:
                 for row in cursor.fetchall():
                     streams_progressivos.append({
                         'format_id': row[2], 'download_url': row[3], 'file_extension': row[4],
-                        'resolution': row[5], 'fps': row[6], 'codec': row[7], 'bitrate': row[8], 'file_size': row[9]
+                        'resolution': row[5], 'fps': row[6], 'codec': row[7], 'bitrate': row[8], 'file_size_pro': row[9]
                     })
 
                 # Buscar streams adaptativos
@@ -69,7 +70,7 @@ class DatabaseManager:
                 for row in cursor.fetchall():
                     streams_adaptativos.append({
                         'format_id': row[2], 'download_url': row[3], 'file_extension': row[4],
-                        'resolution': row[5], 'fps': row[6], 'codec': row[7], 'bitrate': row[8], 'file_size': row[9],
+                        'resolution': row[5], 'fps': row[6], 'codec': row[7], 'bitrate': row[8], 'file_size_adp': row[9],
                         'audio_quality': row[10]
                     })
 
@@ -79,7 +80,7 @@ class DatabaseManager:
                     miniaturas.append({'url': row[2], 'width': row[3], 'height': row[4]})
 
             return {
-                'video': video_info,
+                'video': video_info_table,
                 'progressive_streams': streams_progressivos,
                 'adaptive_streams': streams_adaptativos,
                 'thumbnails': miniaturas
@@ -152,17 +153,17 @@ class DatabaseManager:
 
             # Insere streams progressivos
             for stream in streams_progressivos:
-                cursor.execute('''INSERT INTO progressive_streams (video_id, format_id, download_url, file_extension, resolution, fps, codec, bitrate, file_size)
+                cursor.execute('''INSERT INTO progressive_streams (video_id, format_id, download_url, file_extension, resolution, fps, codec, bitrate, file_size_pro)
                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                                (video_id, stream['format_id'], stream['download_url'], stream['file_extension'], 
-                                stream['resolution'], stream['fps'], stream['codec'], stream['bitrate'], stream['file_size']))
+                                stream['resolution'], stream['fps'], stream['codec'], stream['bitrate'], stream['file_size_pro']))
 
             # Insere streams adaptativos
             for stream in streams_adaptativos:
-                cursor.execute('''INSERT INTO adaptive_streams (video_id, format_id, download_url, file_extension, resolution, fps, codec, bitrate, file_size, audio_quality)
+                cursor.execute('''INSERT INTO adaptive_streams (video_id, format_id, download_url, file_extension, resolution, fps, codec, bitrate, file_size_adp, audio_quality)
                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                                (video_id, stream['format_id'], stream['download_url'], stream['file_extension'], 
-                                stream['resolution'], stream['fps'], stream['codec'], stream['bitrate'], stream['file_size'], 
+                                stream['resolution'], stream['fps'], stream['codec'], stream['bitrate'], stream['file_size_adp'], 
                                 stream['audio_quality']))
 
             # Insere miniaturas
@@ -231,7 +232,7 @@ class DatabaseManager:
                 fps INTEGER,
                 codec TEXT,
                 bitrate INTEGER,
-                file_size INTEGER,
+                file_size_pro INTEGER,
                 FOREIGN KEY(video_id) REFERENCES videos(id))
             ''')
 
@@ -247,7 +248,7 @@ class DatabaseManager:
                 fps INTEGER,
                 codec TEXT,
                 bitrate INTEGER,
-                file_size INTEGER,
+                file_size_adp INTEGER,
                 audio_quality INTEGER,
                 FOREIGN KEY(video_id) REFERENCES videos(id))
             ''')

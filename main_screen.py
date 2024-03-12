@@ -50,8 +50,7 @@ class Magoa(tk.Tk):
         if videos and 0 <= selected_index < len(videos):
             selected_video_id = videos[selected_index]['id']
             # Agora você tem o ID do vídeo selecionado e pode utilizá-lo conforme necessário
-            video_info = self.db_manager.buscar_informacoes_video_pelo_titulo(videos[selected_index]['title'])  # Método a ser implementado
-            #stream_progressive = self.db_manager.buscar_informacoes_video_pelo_titulo*(progressive_streams[selected_index]['title'])
+            video_info = self.db_manager.buscar_info_completa_por_id_video(selected_video_id)  # Método a ser implementado
             self.update_video_details_ui(video_info)  # Este método já deve estar implementado para atualizar a UI com as informações do vídeo
 
     def limpar_widget(self, nome_widget, tipo):
@@ -60,110 +59,82 @@ class Magoa(tk.Tk):
         elif tipo == 'text':
             self.app_data_view.widgets[nome_widget].delete("1.0", tk.END)
 
-    def update_video_details_ui(self, video_info):
-        if hasattr(self, 'app_data_view') and video_info:
-            # Atualiza os widgets de entrada de texto com informações do vídeo
-            # Exemplo de atualização direta para alguns campos, ajuste conforme necessário
-            if 'id' in video_info:
+    def update_video_details_ui(self, complete_video_info):
+        if hasattr(self, 'app_data_view') and complete_video_info:
+            video_info = complete_video_info.get('video', {})
+            if video_info:
                 self.limpar_widget('video_id', 'entry')
+                self.app_data_view.widgets['video_id'].delete(0, tk.END)
                 self.app_data_view.widgets['video_id'].insert(0, video_info['id'])
 
-            if 'url' in video_info:
-                self.limpar_widget('url', 'entry')
-                self.app_data_view.widgets['url'].insert(0, video_info['url'])
+                if 'url' in video_info:
+                    self.limpar_widget('url', 'entry')
+                    self.app_data_view.widgets['url'].delete(0, tk.END)
+                    self.app_data_view.widgets['url'].insert(0, video_info['url'])
 
-            if 'title' in video_info:
-                self.limpar_widget('Titulo', 'entry')
-                self.app_data_view.widgets['Titulo'].insert(0, video_info['title'])
+                if 'title' in video_info:
+                    self.limpar_widget('Titulo', 'entry')
+                    self.app_data_view.widgets['Titulo'].delete(0, tk.END)
+                    self.app_data_view.widgets['Titulo'].insert(0, video_info['title'])
 
-            if 'description' in video_info:
-                self.limpar_widget('descricao', 'text')
-                self.app_data_view.widgets['descricao'].insert("1.0", video_info['description'])
-            # Continue para outros campos conforme necessário
+                if 'description' in video_info:
+                    self.limpar_widget('descricao', 'text')
+                    self.app_data_view.widgets['descricao'].delete("1.0", tk.END)
+                    self.app_data_view.widgets['descricao'].insert("1.0", video_info['description'])
 
-    def show_video_info(self, video_info):
-        if hasattr(self, 'app_data_view'):
-            campos_simples = {
-                'id': ('video_id', 'entry'),
-                'url': ('url', 'entry'),
-                'title': ('Titulo', 'entry'),
-                'description': ('descricao', 'text'),
-                'Audio_e_Video': ('resolução', 'text'),
-                'file_extension.': ('file_extension', 'text'),
-                'file_size.': ('file_size', 'entry'),
-                'download_url.': ('download_url', 'text'),
-                # Campos adicionados com base nos arquivos de código
-                'codec.': ('codec', 'text'),  # Presente em streams progressivos e adaptativos
-                'Audio_Qualit': ('audio_quality', 'text'),  # Qualidade de áudio para streams adaptativos
-                'Audio': ('audio', 'entry'),  # Identificador genérico para campos de áudio
-                'extension_Audio': ('extension_audio', 'text'),  # Extensão de arquivo para áudio
-                'codec_audio': ('codec_audio', 'text'),  # Codec usado para áudio
-                'size_audio': ('size_audio', 'entry'),  # Tamanho do arquivo de áudio
-                'download Audio': ('download_audio_url', 'text'),  # URL para download de áudio
-                'Video': ('video', 'entry'),  # Identificador genérico para campos de vídeo
-                'resolution': ('resolution', 'text'),  # Resolução para vídeo
-                'fps': ('fps', 'entry'),  # Frames por segundo
-                'size_video': ('size_video', 'entry'),  # Tamanho do arquivo de vídeo
-                'extension_Video': ('extension_video', 'text'),  # Extensão de arquivo para vídeo
-                'codec_video': ('codec_video', 'text'),  # Codec usado para vídeo
-                'download Video': ('download_video_url', 'text'),  # URL para download de vídeo
-                'thumb': ('thumbnail_url', 'text'),  # URL da miniatura do vídeo
-    }
-            # Exemplo de como atualizar widgets para streams progressivos e adaptativos
-            # Esta seção precisa ser adaptada conforme a estrutura dos seus dados
-            if 'progressive_streams' in video_info and video_info['progressive_streams']:
-                stream = video_info['progressive_streams'][0]  # Exemplo: usar o primeiro stream
-                self.app_data_view.widgets['Audio e Video'].delete(0, tk.END)
-                self.app_data_view.widgets['Audio e Video'].insert(0, stream.get('codec'))
+            progressive_streams = complete_video_info.get('progressive_streams', [])
+            if progressive_streams:
+                stream = progressive_streams[0] 
+                self.app_data_view.widgets['codec'].delete(0, tk.END)
+                self.app_data_view.widgets['codec'].insert(0, stream.get('codec', ''))
 
-                self.app_data_view.widgets['file_extension.'].delete(0, tk.END)
-                self.app_data_view.widgets['file_extension.'].insert(0, stream.get('file_extension'))
+                #self.app_data_view.widgets['file_extension'].delete(0, tk.END)
+                #self.app_data_view.widgets['file_extension'].insert(0, stream.get('file_extension', ''))
 
-                self.app_data_view.widgets['file_size.'].delete(0, tk.END)
-                self.app_data_view.widgets['file_size.'].insert(0, stream.get('file_size'))
+                self.app_data_view.widgets['file_size_pro'].delete(0, tk.END)
+                self.app_data_view.widgets['file_size_pro'].insert(0, stream.get('file_size_pro', ''))
 
-                self.app_data_view.widgets['download_url.'].delete(0, tk.END)
-                self.app_data_view.widgets['download_url.'].insert(0, stream.get('download_url'))
+                self.app_data_view.widgets['download_url'].delete(0, tk.END)
+                self.app_data_view.widgets['download_url'].insert(0, stream.get('download_url', ''))
 
-            # Exemplo para streams adaptativos
-            if 'adaptive_streams' in video_info and video_info['adaptive_streams']:
-                audio_stream = video_info['adaptive_streams']['audio'][0]  # Exemplo: usar o primeiro stream de áudio
-                video_stream = video_info['adaptive_streams']['video'][0]  # Exemplo: usar o primeiro stream de vídeo
+            adaptive_streams = complete_video_info.get('adaptive_streams', [])
+            if adaptive_streams:
+                stream = adaptive_streams[0]
+                #audio_stream = video_info['adaptive_streams']['video_id'][0]  # Exemplo: usar o primeiro stream de áudio
+                #video_stream = video_info['adaptive_streams']['video_id'][0]  # Exemplo: usar o primeiro stream de vídeo
 
                 self.app_data_view.widgets['Audio'].delete(0, tk.END)
-                self.app_data_view.widgets['Audio'].insert(0, audio_stream.get('codec_audio'))
+                self.app_data_view.widgets['Audio'].insert(0, stream.get('codec_audio'))
 
                 self.app_data_view.widgets['extension_Audio'].delete(0, tk.END)
-                self.app_data_view.widgets['extension_Audio'].insert(0, audio_stream.get('file_extension'))
+                self.app_data_view.widgets['extension_Audio'].insert(0, stream.get('file_extension'))
 
                 self.app_data_view.widgets['size_audio'].delete(0, tk.END)
-                self.app_data_view.widgets['size_audio'].insert(0, audio_stream.get('file_size'))
+                self.app_data_view.widgets['size_audio'].insert(0, stream.get('file_size_adp'))
 
                 self.app_data_view.widgets['download Audio'].delete(0, tk.END)
-                self.app_data_view.widgets['download Audio'].insert(0, audio_stream.get('download_url'))
+                self.app_data_view.widgets['download Audio'].insert(0, stream.get('download_url'))
 
                 self.app_data_view.widgets['Video'].delete(0, tk.END)
-                self.app_data_view.widgets['Video'].insert(0, video_stream.get('codec_video'))
+                self.app_data_view.widgets['Video'].insert(0, stream.get('codec_video'))
 
                 self.app_data_view.widgets['resolution'].delete(0, tk.END)
-                self.app_data_view.widgets['resolution'].insert(0, video_stream.get('resolution'))
+                self.app_data_view.widgets['resolution'].insert(0, stream.get('resolution'))
 
                 self.app_data_view.widgets['fps'].delete(0, tk.END)
-                self.app_data_view.widgets['fps'].insert(0, video_stream.get('fps'))
+                self.app_data_view.widgets['fps'].insert(0, stream.get('fps'))
 
                 self.app_data_view.widgets['size_video'].delete(0, tk.END)
-                self.app_data_view.widgets['size_video'].insert(0, video_stream.get('file_size'))
+                self.app_data_view.widgets['size_video'].insert(0, stream.get('file_size_adp'))
 
                 self.app_data_view.widgets['extension_Video'].delete(0, tk.END)
-                self.app_data_view.widgets['extension_Video'].insert(0, video_stream.get('file_extension'))
+                self.app_data_view.widgets['extension_Video'].insert(0, stream.get('file_extension'))
 
                 self.app_data_view.widgets['download Video'].delete(0, tk.END)
-                self.app_data_view.widgets['download Video'].insert(0, video_stream.get('download_url'))
-
-            # Atualização de Thumbnail
-            if 'thumbnails' in video_info and video_info['thumbnails']:
-                # Exemplo: usar a URL da primeira miniatura disponível
-                thumb_url = video_info['thumbnails'][0].get('url')
+                self.app_data_view.widgets['download Video'].insert(0, stream.get('download_url'))
+            thumbnails = complete_video_info.get('thumbnails', [])
+            if thumbnails:
+                thumb_url = thumbnails[0].get('url', '')
                 self.app_data_view.widgets['thumb'].delete(0, tk.END)
                 self.app_data_view.widgets['thumb'].insert(0, thumb_url)
 
@@ -287,7 +258,7 @@ class Magoa(tk.Tk):
         for widget in self.reserve_area_frame.winfo_children():
             widget.destroy()
         # Recarregar o módulo para aplicar as mudanças
-        importlib.reload(data_view)
+        #importlib.reload(data_view)
         # Cria a nova instância de SeuApp dentro do frame limpo com o código atualizado
         self.app_data_view = data_view.SeuApp(self.reserve_area_frame)
 
