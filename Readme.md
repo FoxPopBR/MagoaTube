@@ -1,5 +1,5 @@
 # Documentação do Projeto
-
+<a id="topo"></a>
 ## Índice
 
 - [Documentação do Projeto](#documentação-do-projeto)
@@ -149,3 +149,8 @@
 </details>
 
 ### 🛑 Documentação em construção junto com o desenvolvimento do código
+
+<!-- Coloque este HTML no final do seu documento Markdown, ajustando o tamanho do emoji com `font-size` -->
+<div style="position: fixed; bottom: 50px; right: 100px; cursor: pointer; font-size: 3em;">
+    <a href="#topo">🔝</a>
+</div>
