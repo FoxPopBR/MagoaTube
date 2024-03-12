@@ -15,6 +15,7 @@
   - [Lógica Geral de Coleta de Dados URL](#lógica-geral-de-coleta-de-dados-url)
     - [Processo de Coleta de Dados](#processo-de-coleta-de-dados)
   - [Passo a Passo da Lógica para Exibição dos Dados](#passo-a-passo-da-lógica-para-exibição-dos-dados)
+    - [🛑 Documentação em construção junto com o desenvolvimento do código](#-documentação-em-construção-junto-com-o-desenvolvimento-do-código)
 
 ## Estrutura do Projeto
 
@@ -135,14 +136,14 @@
 <details>
   <summary style="font-weight: bold; font-size: larger;">📅 Diagrama de Exibição de Dados 💾 [Clique aqui 👈]</summary>
   <pre>
-    <img src="tools/diagram_lógica_exibição__dados.png" alt="Diagrama de Exibição de Dados">
+    <img src="modules/diagram_lógica_exibição__dados.png" alt="Diagrama de Exibição de Dados">
   </pre>
 </details>
 
 <details>
 <summary style="font-weight: bold; font-size: larger;">📅 Diagrama Exibição e funcionamento Detalhes Video 📝 [Clique aqui 👈]</summary>
   <pre>
-    <img src="tools/Imagem_explicativa_projeto_detalhes_video.png" alt="Diagrama de Exibição de Dados">
+    <img src="modules/Imagem_explicativa_projeto_detalhes_video.png" alt="Diagrama de Exibição de Dados">
   </pre>
 </details>
 </details>
